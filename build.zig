@@ -75,8 +75,12 @@ fn setupExample(b: *std.Build, exe: *std.Build.Step.Compile, comptime name: []co
 
     const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
+    if (exe.exec_cmd_args) |exec_cmd_args| {
+        for (exec_cmd_args) |cmd_arg| {
+            if (cmd_arg) |arg| {
+                run_cmd.addArg(arg);
+            }
+        }
     }
     const run_step = b.step("example_" ++ name, "Run the " ++ name ++ " example");
     run_step.dependOn(&run_cmd.step);
